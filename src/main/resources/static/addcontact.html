@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+    <title>Add Contact</title>
+
+    <style>
+
+        body{
+            font-family:Arial;
+            text-align:center;
+            background:#f2f2f2;
+        }
+
+        .container{
+            margin-top:100px;
+            background:white;
+            padding:30px;
+            width:300px;
+            margin:auto;
+            border-radius:10px;
+            box-shadow:0px 0px 10px gray;
+        }
+
+        input{
+            width:90%;
+            padding:10px;
+            margin:10px;
+        }
+
+        button{
+            padding:10px 20px;
+            background:blue;
+            color:white;
+            border:none;
+            border-radius:5px;
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+<div class="container">
+
+    <h2>Add Emergency Contact</h2>
+
+    <input  id="Name" placeholder="Name"><br>
+
+    <input  id="phone" placeholder="Phone Number"><br>
+
+    <button onclick="addContact()">Save Contact</button>
+
+</div>
+
+<script>
+    const BASE_URL = window.location.origin;
+    function addContact(){
+
+        let Name=document.getElementById("Name").value;
+        let phone=document.getElementById("phone").value;
+
+        console.log(Name);
+        console.log(phone);
+
+        fetch(BASE_URL + "/contact/add", {
+
+            method:"POST",
+
+            headers:{
+                "Content-Type":"application/json"
+            },
+
+            body:JSON.stringify({
+
+                userId:1,
+                Name:Name,
+                phone:phone
+
+            })
+
+        })
+
+            .then(res=>res.json())
+            .then(data=>{
+
+                alert("Contact Added Successfully");
+
+            })
+
+            .catch(error=>{
+
+                alert("Error saving contact");
+
+            });
+
+    }
+
+</script>
+
+</body>
+</html>

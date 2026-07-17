@@ -1,0 +1,179 @@
+<!DOCTYPE html><html>
+<head>
+    <meta charset="UTF-8">
+    <title>SafeWalk Dashboard</title><style>
+    body {
+        margin: 0;
+        font-family: 'Segoe UI', sans-serif;
+        background: linear-gradient(135deg, #1e3c72, #2a5298);
+        height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        color: white;
+    }
+
+    .card {
+        background: rgba(255, 255, 255, 0.1);
+        backdrop-filter: blur(15px);
+        padding: 40px;
+        border-radius: 20px;
+        text-align: center;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        width: 320px;
+    }
+
+    h2 {
+        margin-bottom: 20px;
+    }
+
+    button {
+        width: 100%;
+        padding: 14px;
+        margin: 10px 0;
+        border: none;
+        border-radius: 12px;
+        font-size: 16px;
+        cursor: pointer;
+        transition: 0.3s;
+    }
+
+    #welcome{
+    margin-bottom:10px;
+    font-weight: normal;
+    color: #ddd;
+    }
+
+    .add {
+        background: #00c853;
+        color: white;
+    }
+
+    .sos {
+        background: #ff1744;
+        color: white;
+        font-weight: bold;
+        letter-spacing: 1px;
+    }
+
+    button:hover {
+        transform: scale(1.05);
+        opacity: 0.9;
+    }
+
+    #status {
+        margin-top: 15px;
+        font-size: 14px;
+    }
+
+    .pulse {
+        animation: pulse 1.5s infinite;
+    }
+
+    @keyframes pulse {
+        0% { box-shadow: 0 0 0 0 rgba(255,23,68,0.7); }
+        70% { box-shadow: 0 0 0 15px rgba(255,23,68,0); }
+        100% { box-shadow: 0 0 0 0 rgba(255,23,68,0); }
+    }
+</style>
+
+</head><body><div class="card"><h2>🚶 SafeWalk</h2>
+    <h3 id="welcome"></h3>
+
+    <button onclick="logout()" style="background:#555;">
+        🚪 Logout
+    </button>
+    <button class="add" onclick="window.location.href='addcontact.html'">
+        ➕ Add Emergency Contact
+    </button>
+
+    <button class="sos pulse" onclick="sendSOS()">
+        🚨 SEND SOS
+    </button>
+
+    <p id="status"></p>
+
+</div><script>
+    const BASE_URL = window.location.origin;
+    document.addEventListener("DOMContentLoaded", function(){
+
+    let name = localStorage.getItem("username");
+
+    if(name){
+        document.getElementById("welcome").innerText = "Welcome, " + name + " 👋";
+    }
+
+});
+
+    function sendSOS() {
+
+        let msg = document.getElementById("status");
+        msg.innerText = "📍 Getting location...";
+        msg.style.color = "white";
+
+        navigator.geolocation.getCurrentPosition(
+
+            function(position) {
+
+                let lat = position.coords.latitude;
+                let lon = position.coords.longitude;
+
+                let location = lat + "," + lon;
+
+                msg.innerText = "🗺 Opening map...";
+
+                let message = "🚨 EMERGENCY ALERT ! I need help!\nLocation: https://maps.google.com/?q=" + lat + "," + lon;
+
+                fetch(BASE_URL + "/contact/user/1")
+                .then(res => res.json())
+                .then(contacts => {
+
+                    contacts.forEach(contact => {
+
+                        let number = contact.phone;
+
+                        let whatsappURL = "https://wa.me/91" + number + "?text=" + encodeURIComponent(message);
+
+                        window.open(whatsappURL, "_blank");
+
+                    });
+
+                });
+
+                fetch(BASE_URL + "/sos/alert", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({
+                        location: location,
+                        message: "Emergency! I need help",
+                        userId: 1
+                    })
+                })
+                .then(res => res.text())
+                .then(data => {
+                    msg.innerText = "✅ SOS Sent Successfully!";
+                    msg.style.color = "lime";
+                })
+                .catch(err => {
+                    msg.innerText = "❌ Failed to send SOS";
+                    msg.style.color = "red";
+                });
+
+            },
+
+            function(error) {
+                msg.innerText = "❌ Location permission required";
+                msg.style.color = "red";
+            }
+        );
+    }
+    function logout(){
+    if(confirm("Are you sure you want to logout?")){
+        localStorage.clear();
+        window.location.href = "login.html";
+    }
+}
+</script></body>
+</html>
