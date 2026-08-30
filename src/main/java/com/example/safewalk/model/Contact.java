@@ -10,7 +10,7 @@ public class Contact {
     private Long id;
 
     private Long userId;
-    private String Name;
+    private String name;
     private String phone;
 
     public Contact() {}
@@ -28,11 +28,11 @@ public class Contact {
     }
 
     public String getName() {
-        return Name;
+        return name;
     }
 
     public void setName(String name) {
-        this.Name = this.Name;
+        this.name = name;
     }
 
     public String getPhone() {

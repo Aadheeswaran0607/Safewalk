@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>View Contacts</title>
+</head>
+<body>
+    <h2>Emergency Contacts</h2>
+
+    <table border="1" id="contactTable">
+
+        <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Phone</th>
+        </tr>
+
+    </table>
+
+    <script>
+        const BASE_URL = window.location.origin;
+
+        fetch(BASE_URL + "/contact/all")
+            .then(res => res.json())
+            .then(data => {
+
+                const table = document.getElementById("contactTable");
+
+                data.forEach(contact => {
+
+                    const row = table.insertRow();
+
+                    row.insertCell().innerText = contact.id;
+                    row.insertCell().innerText = contact.name;
+                    row.insertCell().innerText = contact.phone;
+
+                });
+
+            });
+
+    </script>
+</body>
+</html>
