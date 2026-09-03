@@ -5,8 +5,10 @@ import com.example.safewalk.repository.UserRepository;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.http.ResponseEntity;   // 🔥 ADD THIS
-import org.springframework.http.HttpStatus;      // 🔥 ADD THIS
+import org.springframework.http.ResponseEntity;
+import org.springframework.http.HttpStatus;
+
+import java.util.List;
 
 @CrossOrigin(origins = "*")
 @RestController
@@ -36,5 +38,11 @@ public class UserController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                     .body("Invalid email or password");
         }
+    }
+
+    // GET ALL USERS
+    @GetMapping
+    public List<User> getAllUsers() {
+        return userRepository.findAll();
     }
 }
